@@ -86,7 +86,7 @@ Dedicated 1024-byte CRT protocol: ten JPEG keys (CRT BAT uploads committed with 
 | [VSDinside N4 Pro](#vsdinside-n4-pro) | vsdinside | `0x5548:0x1023` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
 | [Mars Gaming MSD-PRO](#mars-msd-pro) | mars-gaming | `0x0b00:0x1003` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
 | [Soomfon CN003](#soomfon-cn003) | soomfon | `0x1500:0x3002` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
-| [Streonor S10 Pro](#streonor-s10-pro) | streonor | `0x1500:0x3007` | 10 (5×2) | 112×112 | JPEG | — | — untested |
+| [Streonor S10 Pro](#streonor-s10-pro) | streonor | `0x1500:0x3007` | 10 (5×2) | 112×112 | JPEG | — | ✓ tested (Windows, 2026-10-18) |
 | [AJAZZ AKP05E Pro](#ajazz-akp05e-pro) | ajazz | `0x0300:0x3013` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
 | [AJAZZ AKP05CN Pro](#ajazz-akp05cn-pro) | ajazz | `0x0300:0x3014` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
 
@@ -607,11 +607,11 @@ Streonor S10 Pro (VID 0x1500, PID 0x3007): ten LCD keys, four encoders and a tou
 | **Keys** | 10 (5×2) |
 | **Panel** | 112×112 JPEG |
 | **Protocol** | `ajazz-akp05` |
-| **Tested** | — untested |
+| **Tested** | ✓ tested (Windows, 2026-10-18) |
 
-- The main Stream Deck + panel controls the left eight keys, all four dials and the touch strip. A second Stream Deck Mini panel controls the two right-column keys: its top-left slot maps to the physical top-right key, and its bottom-left slot maps to the physical bottom-right key. The other four Mini slots have no physical counterpart.
+- The main Stream Deck + panel controls the left eight keys, all four dials and the touch strip. A second Stream Deck Mini panel controls the two right-column keys: its top-left slot maps to the physical top-right key, and its bottom-left slot maps to the physical bottom-right key. The other four Mini slots have no physical counterpart. DeckBridge combines both panels' images in its physical 5x2 preview; clicks on the right column route through the Mini panel.
 - Pair the main panel at 127.0.0.1:5343 and the right-column panel at 127.0.0.2:5347. Elgato permits one dock per IP address. The right-column listener binds only to 127.0.0.2; Windows supports this loopback address without administrator setup. The two panels have independent profiles and pages and share one USB worker; the right-column keys are no longer DeckBridge widget keys.
-- Windows 11 with Stream Deck 7.6.0 was used for a live geometry probe on 2026-10-18: advertising ten keys as a Plus still produced eight editor slots and images only for indices 0-7. The two-panel implementation has automated routing and reconnect coverage; physical validation of its second panel is pending.
+- Windows 11 with Stream Deck 7.6.0 was used for a live geometry probe on 2026-10-18: advertising ten keys as a Plus still produced eight editor slots and images only for indices 0-7. The owner confirmed the extra-key actions, original keys, knobs and touch working across both panels, with both extra-key images upright and readable. Mini BMPs transpose the source axes; the default Streonor transform is rotation 270 + flipH, covered by an asymmetric native pixel test. Routing and reconnect have automated coverage. Windows reboot and startup ordering have not been tested.
 - opendeck-akp05 files this model under the Soomfon VID (0x1500).
 
 [Full spec →](./device-specs.mdx#streonor-s10-pro)

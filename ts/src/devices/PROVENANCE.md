@@ -218,7 +218,7 @@ opendeck-akp05, the Mirabox SDK and VT-Ragnaros. opendeck-akp05 queries usage pa
 
 ### Open items, nothing measured
 
-#### Streonor S10 Pro two-panel experiment (Windows, 2026-10-18)
+#### Streonor S10 Pro two-panel support (Windows, 2026-10-18)
 
 The owner confirmed the primary eight keys, dials and strip working with Elgato
 7.6.0. A geometry-only probe advertised a 5x2 Plus; Elgato still showed a 4x2 editor
@@ -229,9 +229,14 @@ address without administrator setup. Mini slots 0 and 3 map to image wires 15 an
 input codes 5 and 10. Its other four slots are unused. One USB worker drives both
 panels; the second panel retains its pairing and cached images across a USB replug.
 Both panels paired simultaneously after giving the second one its own loopback IP.
-A captured Mini BMP arrived 90 degrees counterclockwise from the editor; its transform
-adds a clockwise quarter-turn before the physical device transform. Routing/lifecycle
-coverage is automated; final physical orientation and action validation is pending.
+Captured Mini BMPs transpose the editor's source axes. The bridge composes that
+inverse with the physical device transform (default Streonor: rotation 270 + flipH).
+An asymmetric pixel test checks all four LCD quadrants through the native JPEG transform.
+The owner confirmed both extra-key actions and the original eight keys, knobs and
+touch strip working, with both extra-key images upright and readable. DeckBridge
+mirrors the Mini frames into the physical 5x2 preview, preserves the Plus's row
+positions, and routes right-column preview presses to the Mini. Routing/lifecycle
+coverage is automated. Windows reboot and startup ordering remain untested.
 
 #### Other AKP05 family questions
 

@@ -1834,8 +1834,8 @@
       "id": "streonor-s10-pro",
       "name": "Streonor S10 Pro",
       "family": "ajazz-akp05",
-      "tested": false,
-      "testedLabel": "— untested",
+      "tested": true,
+      "testedLabel": "✓ tested (Windows, 2026-10-18)",
       "cells": {
         "identity": {
           "name": "Streonor S10 Pro",
@@ -2044,6 +2044,11 @@
       "tested": true
     },
     {
+      "id": "streonor-s10-pro",
+      "name": "Streonor S10 Pro",
+      "tested": true
+    },
+    {
       "id": "ajazz-akp05",
       "name": "AJAZZ AKP05",
       "tested": false
@@ -2136,11 +2141,6 @@
     {
       "id": "soomfon-cn003",
       "name": "Soomfon CN003",
-      "tested": false
-    },
-    {
-      "id": "streonor-s10-pro",
-      "name": "Streonor S10 Pro",
       "tested": false
     },
     {

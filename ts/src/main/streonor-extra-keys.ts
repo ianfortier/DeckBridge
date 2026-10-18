@@ -24,7 +24,7 @@ const INPUT_KEYS = new Map([
   [5, 0],
   [10, 3],
 ]);
-const CLOCKWISE_QUARTER_TURN = { 0: 90, 90: 180, 180: 270, 270: 0 } as const;
+const MINI_TO_DEVICE_ROTATION = { 0: 90, 90: 0, 180: 270, 270: 180 } as const;
 export const STREONOR_EXTRA_DOCK_INDEX = MAX_MULTI_DECK_DOCKS;
 
 /** Shares the primary USB worker; closing this panel never closes the hardware. */
@@ -78,12 +78,14 @@ export class StreonorExtraKeysDriver extends EventEmitter implements DockDriver 
   private paint(key: number, bytes: Uint8Array): void {
     const hardware = this.hardware;
     if (!hardware) return;
-    // Mini CORA BMPs arrive 90 degrees counterclockwise; restore upright before the device transform.
+    // Mini BMPs transpose the source axes; compose the inverse with the physical transform.
     const spec = {
       ...hardware.model.image,
-      rotate: CLOCKWISE_QUARTER_TURN[hardware.model.image.rotate],
+      rotate: MINI_TO_DEVICE_ROTATION[hardware.model.image.rotate],
+      flipH: !hardware.model.image.flipH,
     };
     hardware.sendSplashImage(IMAGE_WIRES.get(key)!, bytes, spec);
+    this.emit('previewImage', key === 0 ? 8 : 9, bytes);
     this.emit('imageSent', key, false);
   }
 
@@ -109,9 +111,13 @@ export function wireStreonorExtraKeys(deps: {
   settings: PersistedSettings;
   coraDockFactory: CoraDockFactory;
   getShuttingDown: () => boolean;
-}): { sync(): Promise<void>; stop(): Promise<void> } {
+  onPreviewImage?: (index: number, bytes: Uint8Array) => void;
+}): { sync(): Promise<void>; stop(): Promise<void>; pressPreviewKey(index: number): boolean } {
   const { driverManager: host, settings } = deps;
   const driver = new StreonorExtraKeysDriver();
+  driver.on('previewImage', (index: number, bytes: Uint8Array) =>
+    deps.onPreviewImage?.(index, bytes),
+  );
   let panel: Dock | null = null;
   let deviceKey: string | null = null;
   let stopped = false;
@@ -175,6 +181,11 @@ export function wireStreonorExtraKeys(deps: {
   void sync();
   return {
     sync,
+    pressPreviewKey(index) {
+      if (host.getCurrentDriver()?.model.id !== 'streonor-s10-pro' || (index !== 8 && index !== 9))
+        return false;
+      return host.simulateKeyPress(STREONOR_EXTRA_DOCK_INDEX, index === 8 ? 0 : 3);
+    },
     async stop() {
       stopped = true;
       host.off('changed', onChange);

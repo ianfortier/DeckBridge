@@ -213,10 +213,6 @@ const elgatoAutoRestart = new ElgatoAutoRestart(
   createElgatoAutoRestartDeps({ webui, settings, driverManager }),
 );
 
-webui.on('keyPress', ({ dock, index }: { dock: number; index: number }) =>
-  driverManager.simulateKeyPress(dock, index),
-);
-
 const virtualDeck = wireVirtualDeck({
   webui,
   settings,
@@ -231,6 +227,12 @@ const streonorExtraKeys = wireStreonorExtraKeys({
   settings,
   coraDockFactory,
   getShuttingDown: () => shuttingDown,
+  onPreviewImage: (index, bytes) => webui.notifyDockImage(0, index, Buffer.from(bytes), 'bmp'),
+});
+
+webui.on('keyPress', ({ dock, index }: { dock: number; index: number }) => {
+  if (dock === 0 && streonorExtraKeys.pressPreviewKey(index)) return;
+  driverManager.simulateKeyPress(dock, index);
 });
 
 const shutdown = createShutdown({

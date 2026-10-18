@@ -112,6 +112,18 @@ html[data-mode='advanced'] #simple-view {
 .key-grid[data-cora='stream-deck-plus'] .key-cell img {
   transform: none;
 }
+/* The shared Streonor preview appends the Mini's two frames after the Plus's eight. */
+.key-grid[data-model='streonor-s10-pro'] .key-cell[data-key='8'] {
+  grid-column: 5;
+  grid-row: 1;
+}
+.key-grid[data-model='streonor-s10-pro'] .key-cell[data-key='9'] {
+  grid-column: 5;
+  grid-row: 2;
+}
+.key-grid[data-model='streonor-s10-pro'] :is(.key-cell[data-key='8'], .key-cell[data-key='9']) img {
+  transform: rotate(270deg) rotateY(180deg);
+}
 /* Label kept for assistive tech where a surrounding group already names the field. */
 .visually-hidden {
   position: absolute;
