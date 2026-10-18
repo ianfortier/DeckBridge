@@ -218,6 +218,18 @@ opendeck-akp05, the Mirabox SDK and VT-Ragnaros. opendeck-akp05 queries usage pa
 
 ### Open items, nothing measured
 
+#### Streonor S10 Pro two-panel experiment (Windows, 2026-10-18)
+
+The owner confirmed the primary eight keys, dials and strip working with Elgato
+7.6.0. A geometry-only probe advertised a 5x2 Plus; Elgato still showed a 4x2 editor
+and sent only image indices 0-7. This fork therefore keeps the Plus panel and adds
+a Mini panel on ports 5347/5348. Mini slots 0 and 3 map to image wires 15 and 10 and
+input codes 5 and 10. Its other four slots are unused. One USB worker drives both
+panels; the second panel retains its pairing and cached images across a USB replug.
+The new panel has automated routing/lifecycle coverage; physical validation is pending.
+
+#### Other AKP05 family questions
+
 - **SS552 strip.** VT-Ragnaros paints four contiguous 176×124 panels (each flushed with
   STP); opendeck-akp05 and the N4 SDK use 176×112; DeckBridge inherits the AKP05E
   800×112 single surface with slot windows at x = 0 / 204 / 406 / 610. Only hardware

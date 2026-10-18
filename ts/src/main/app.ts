@@ -33,6 +33,7 @@ import { stopSpawns } from '../infra/owned-spawn.js';
 import { shutdownPluginHost } from '../plugin/plugin-host.js';
 import { createShutdown } from './shutdown.js';
 import { wireVirtualDeck } from './virtual-deck/virtual-deck-wiring.js';
+import { wireStreonorExtraKeys } from './streonor-extra-keys.js';
 import {
   MIN_DWELL_MS,
   PING_SCHEDULE_SLACK_MS,
@@ -218,6 +219,13 @@ const virtualDeck = wireVirtualDeck({
   onDockConnected: (i, key) => elgatoAutoRestart.onDockConnected(i, key),
 });
 
+const streonorExtraKeys = wireStreonorExtraKeys({
+  driverManager,
+  settings,
+  coraDockFactory,
+  getShuttingDown: () => shuttingDown,
+});
+
 const shutdown = createShutdown({
   quiesce: () => {
     shuttingDown = true;
@@ -238,6 +246,7 @@ const shutdown = createShutdown({
     ['plugins', shutdownPluginHost],
     ['extensions', () => Promise.resolve(webui.extensions.dispose())],
     ['browser deck', () => virtualDeck.stop()],
+    ['Streonor extra keys', () => streonorExtraKeys.stop()],
     ['docks', () => driverManager.shutdown()],
     ['webui', () => webui.stop()],
     ['tray', async () => tray?.close()],

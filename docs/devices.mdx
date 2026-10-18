@@ -86,7 +86,7 @@ Dedicated 1024-byte CRT protocol: ten JPEG keys (CRT BAT uploads committed with 
 | [VSDinside N4 Pro](#vsdinside-n4-pro) | vsdinside | `0x5548:0x1023` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
 | [Mars Gaming MSD-PRO](#mars-msd-pro) | mars-gaming | `0x0b00:0x1003` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
 | [Soomfon CN003](#soomfon-cn003) | soomfon | `0x1500:0x3002` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
-| [Streonor S10 Pro](#streonor-s10-pro) | streonor | `0x1500:0x3007` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
+| [Streonor S10 Pro](#streonor-s10-pro) | streonor | `0x1500:0x3007` | 10 (5×2) | 112×112 | JPEG | — | — untested |
 | [AJAZZ AKP05E Pro](#ajazz-akp05e-pro) | ajazz | `0x0300:0x3013` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
 | [AJAZZ AKP05CN Pro](#ajazz-akp05cn-pro) | ajazz | `0x0300:0x3014` | 10 (5×2) | 112×112 | JPEG | 2 | — untested |
 
@@ -599,17 +599,19 @@ Soomfon CN003 (VID 0x1500, PID 0x3002): AKP05-family deck, registered as a clone
 
 ### Streonor S10 Pro \{#streonor-s10-pro}
 
-Streonor S10 Pro (VID 0x1500, PID 0x3007): AKP05-family deck, registered as a clone of the AKP05E.
+Streonor S10 Pro (VID 0x1500, PID 0x3007): ten LCD keys, four encoders and a touch strip, exposed through two Elgato panels.
 
 |  |  |
 |---|---|
 | **USB** | `0x1500`:`0x3007` |
-| **Keys** | 10 (5×2) + 2 extra |
+| **Keys** | 10 (5×2) |
 | **Panel** | 112×112 JPEG |
 | **Protocol** | `ajazz-akp05` |
 | **Tested** | — untested |
 
-- Every field except identity is inherited from the AJAZZ AKP05E model (ten 112×112 keys, four encoders, touch strip; pairs as Stream Deck + by default). The ID is source-derived from opendeck-akp05 src/mappings.rs, which queries usage page 0xffa0 / usage 1 for every AKP05-family row without per-model verification. Not DeckBridge-tested on this SKU.
+- The main Stream Deck + panel controls the left eight keys, all four dials and the touch strip. A second Stream Deck Mini panel controls the two right-column keys: its top-left slot maps to the physical top-right key, and its bottom-left slot maps to the physical bottom-right key. The other four Mini slots have no physical counterpart.
+- Pair the main panel on TCP port 5343 and the right-column panel on TCP port 5347. The two panels have independent profiles and pages. They share one USB worker; the right-column keys are no longer DeckBridge widget keys.
+- Windows 11 with Stream Deck 7.6.0 was used for a live geometry probe on 2026-10-18: advertising ten keys as a Plus still produced eight editor slots and images only for indices 0-7. The two-panel implementation has automated routing and reconnect coverage; physical validation of its second panel is pending.
 - opendeck-akp05 files this model under the Soomfon VID (0x1500).
 
 [Full spec →](./device-specs.mdx#streonor-s10-pro)

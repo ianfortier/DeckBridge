@@ -325,7 +325,10 @@ const EXPECTED: Expected[] = [
   akp05Clone('vsdinside-n4-pro', 'vsdinside', 0x5548, 0x1023),
   akp05Clone('mars-msd-pro', 'mars-gaming', 0x0b00, 0x1003),
   akp05Clone('soomfon-cn003', 'soomfon', 0x1500, 0x3002),
-  akp05Clone('streonor-s10-pro', 'streonor', 0x1500, 0x3007),
+  {
+    ...akp05Clone('streonor-s10-pro', 'streonor', 0x1500, 0x3007),
+    keyMap: { ...AKP05_PLUS_KEYMAP, extraKeys: [], extraKeyInputs: [] },
+  },
   akp05Clone('ajazz-akp05e-pro', 'ajazz', 0x0300, 0x3013),
   akp05Clone('ajazz-akp05cn-pro', 'ajazz', 0x0300, 0x3014),
 ];
@@ -463,12 +466,12 @@ test('the AKP05 pair differ only by id and product id', () => {
   );
 });
 
-test('every AKP05 clone differs from AKP05E only by identity', () => {
+test('AKP05 clones without a separate key panel differ from AKP05E only by identity', () => {
   const base = project(findModelById('ajazz-akp05e')!);
   const clones = DEVICE_MODELS.filter(
-    (m) => m.protocol === 'ajazz-akp05' && m.id !== 'ajazz-akp05e',
+    (m) => m.protocol === 'ajazz-akp05' && m.id !== 'ajazz-akp05e' && m.id !== 'streonor-s10-pro',
   );
-  assert.equal(clones.length, 13);
+  assert.equal(clones.length, 12);
   for (const m of clones) {
     assert.deepEqual(
       { ...project(m), id: '', vendor: '', usbVendorId: 0, usbProductIds: [] },

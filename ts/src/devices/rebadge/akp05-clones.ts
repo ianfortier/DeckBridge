@@ -20,11 +20,24 @@ const AKP05_CLONE_SPECS: readonly CloneSpec[] = [
 ];
 
 function cloneOfAkp05E([id, name, vendor, vid, pid]: CloneSpec): DeviceModel {
-  return { ...AJAZZ_AKP05E_MODEL, id, name, vendor, usbVendorId: vid, usbProductIds: [pid] };
+  const model = { ...AJAZZ_AKP05E_MODEL, id, name, vendor, usbVendorId: vid, usbProductIds: [pid] };
+  if (id !== 'streonor-s10-pro') return model;
+  // The second Elgato panel owns these displays and switches, so widgets must not repaint them.
+  const keyMap = { ...model.keyMap, extraKeys: [], extraKeyInputs: [] };
+  return {
+    ...model,
+    keyMap,
+    cora: {
+      ...model.cora,
+      emulations: {
+        'stream-deck-plus': { image: model.image, keyMap },
+      },
+    },
+  };
 }
 
-/** AKP05 boards sold under other VID/PIDs. NOT HARDWARE-TESTED: every field except
- *  identity is inherited from AJAZZ_AKP05E_MODEL, and the IDs come from opendeck-akp05
+/** AKP05 boards sold under other VID/PIDs. Apart from Streonor's separate key panel,
+ *  fields inherit AJAZZ_AKP05E_MODEL; the IDs come from opendeck-akp05
  *  `src/mappings.rs`. The one open geometry question (SS552 touch strip) and the
  *  adjacent-PID traps are in ../PROVENANCE.md. */
 export const AKP05_CLONE_MODELS: readonly DeviceModel[] = AKP05_CLONE_SPECS.map(cloneOfAkp05E);

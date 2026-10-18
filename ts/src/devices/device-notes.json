@@ -376,10 +376,12 @@
     },
     "streonor-s10-pro": {
       "tested": { "status": false },
-      "summary": "Streonor S10 Pro (VID 0x1500, PID 0x3007): AKP05-family deck, registered as a clone of the AKP05E.",
+      "summary": "Streonor S10 Pro (VID 0x1500, PID 0x3007): ten LCD keys, four encoders and a touch strip, exposed through two Elgato panels.",
       "alsoSoldAs": [],
       "quirks": [
-        "Every field except identity is inherited from the AJAZZ AKP05E model (ten 112×112 keys, four encoders, touch strip; pairs as Stream Deck + by default). The ID is source-derived from opendeck-akp05 src/mappings.rs, which queries usage page 0xffa0 / usage 1 for every AKP05-family row without per-model verification. Not DeckBridge-tested on this SKU.",
+        "The main Stream Deck + panel controls the left eight keys, all four dials and the touch strip. A second Stream Deck Mini panel controls the two right-column keys: its top-left slot maps to the physical top-right key, and its bottom-left slot maps to the physical bottom-right key. The other four Mini slots have no physical counterpart.",
+        "Pair the main panel on TCP port 5343 and the right-column panel on TCP port 5347. The two panels have independent profiles and pages. They share one USB worker; the right-column keys are no longer DeckBridge widget keys.",
+        "Windows 11 with Stream Deck 7.6.0 was used for a live geometry probe on 2026-10-18: advertising ten keys as a Plus still produced eight editor slots and images only for indices 0-7. The two-panel implementation has automated routing and reconnect coverage; physical validation of its second panel is pending.",
         "opendeck-akp05 files this model under the Soomfon VID (0x1500)."
       ],
       "sources": ["ambiso/opendeck-akp05 src/mappings.rs"]
