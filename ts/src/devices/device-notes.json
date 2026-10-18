@@ -380,7 +380,7 @@
       "alsoSoldAs": [],
       "quirks": [
         "The main Stream Deck + panel controls the left eight keys, all four dials and the touch strip. A second Stream Deck Mini panel controls the two right-column keys: its top-left slot maps to the physical top-right key, and its bottom-left slot maps to the physical bottom-right key. The other four Mini slots have no physical counterpart.",
-        "Pair the main panel on TCP port 5343 and the right-column panel on TCP port 5347. The two panels have independent profiles and pages. They share one USB worker; the right-column keys are no longer DeckBridge widget keys.",
+        "Pair the main panel at 127.0.0.1:5343 and the right-column panel at 127.0.0.2:5347. Elgato permits one dock per IP address. The right-column listener binds only to 127.0.0.2; Windows supports this loopback address without administrator setup. The two panels have independent profiles and pages and share one USB worker; the right-column keys are no longer DeckBridge widget keys.",
         "Windows 11 with Stream Deck 7.6.0 was used for a live geometry probe on 2026-10-18: advertising ten keys as a Plus still produced eight editor slots and images only for indices 0-7. The two-panel implementation has automated routing and reconnect coverage; physical validation of its second panel is pending.",
         "opendeck-akp05 files this model under the Soomfon VID (0x1500)."
       ],

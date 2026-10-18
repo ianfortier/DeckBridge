@@ -223,10 +223,15 @@ opendeck-akp05, the Mirabox SDK and VT-Ragnaros. opendeck-akp05 queries usage pa
 The owner confirmed the primary eight keys, dials and strip working with Elgato
 7.6.0. A geometry-only probe advertised a 5x2 Plus; Elgato still showed a 4x2 editor
 and sent only image indices 0-7. This fork therefore keeps the Plus panel and adds
-a Mini panel on ports 5347/5348. Mini slots 0 and 3 map to image wires 15 and 10 and
+a Mini panel at 127.0.0.2 on ports 5347/5348. Elgato permits one dock per IP, so
+127.0.0.1 remains the primary panel's address. Windows accepted the second loopback
+address without administrator setup. Mini slots 0 and 3 map to image wires 15 and 10 and
 input codes 5 and 10. Its other four slots are unused. One USB worker drives both
 panels; the second panel retains its pairing and cached images across a USB replug.
-The new panel has automated routing/lifecycle coverage; physical validation is pending.
+Both panels paired simultaneously after giving the second one its own loopback IP.
+A captured Mini BMP arrived 90 degrees counterclockwise from the editor; its transform
+adds a clockwise quarter-turn before the physical device transform. Routing/lifecycle
+coverage is automated; final physical orientation and action validation is pending.
 
 #### Other AKP05 family questions
 

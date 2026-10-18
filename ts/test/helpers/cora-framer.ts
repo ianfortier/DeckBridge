@@ -54,8 +54,8 @@ class TjsFramer {
   }
 }
 
-export async function connect(port: number): Promise<TjsFramer> {
-  const sock = await tjs.connect('tcp', '127.0.0.1', port);
+export async function connect(port: number, host = '127.0.0.1'): Promise<TjsFramer> {
+  const sock = await tjs.connect('tcp', host, port);
   const { readable, writable } = await sock.opened;
   return new TjsFramer(sock, readable, writable);
 }

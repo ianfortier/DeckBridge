@@ -176,10 +176,12 @@ function PairedAppAction({
 export function PairingFlow({
   onHelp,
   port,
+  address,
   dock,
 }: Readonly<{
   onHelp: (id: string) => void;
   port?: string;
+  address?: string;
   /** Dock this flow pairs; defaults to the selected dock (single-dock stages). */
   dock?: number;
 }>): preact.JSX.Element {
@@ -221,7 +223,9 @@ export function PairingFlow({
         </div>
         {paired === true && <PairedAppAction onHelp={onHelp} />}
       </div>
-      {paired === false && <ManualAddPanel onHelp={onHelp} port={port} expanded />}
+      {paired === false && (
+        <ManualAddPanel onHelp={onHelp} port={port} address={address} expanded />
+      )}
     </div>
   );
 }

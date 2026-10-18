@@ -39,6 +39,7 @@ function nonVerbFeatureLabel(byte1: number): string {
 }
 
 export interface ElgatoServerOptions {
+  bindAddress?: string;
   childPort?: number; // default ELGATO_CHILD_PORT
   mdnsServiceName?: string; // default MDNS_SERVICE_NAME
   dockSerial?: string; // default DEFAULT_DOCK_SERIAL_NUMBER
@@ -128,7 +129,7 @@ export class ElgatoServer extends CoraServerBase {
     skipMdns = false,
     opts: ElgatoServerOptions = {},
   ) {
-    super(port);
+    super(port, opts.bindAddress);
     this.childGeometry = childGeometry;
     this.skipMdns = skipMdns;
     this.childPort = opts.childPort ?? ELGATO_CHILD_PORT;

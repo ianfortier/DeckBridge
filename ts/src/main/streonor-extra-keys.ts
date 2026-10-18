@@ -24,6 +24,7 @@ const INPUT_KEYS = new Map([
   [5, 0],
   [10, 3],
 ]);
+const CLOCKWISE_QUARTER_TURN = { 0: 90, 90: 180, 180: 270, 270: 0 } as const;
 export const STREONOR_EXTRA_DOCK_INDEX = MAX_MULTI_DECK_DOCKS;
 
 /** Shares the primary USB worker; closing this panel never closes the hardware. */
@@ -77,7 +78,12 @@ export class StreonorExtraKeysDriver extends EventEmitter implements DockDriver 
   private paint(key: number, bytes: Uint8Array): void {
     const hardware = this.hardware;
     if (!hardware) return;
-    hardware.sendSplashImage(IMAGE_WIRES.get(key)!, bytes, hardware.model.image);
+    // Mini CORA BMPs arrive 90 degrees counterclockwise; restore upright before the device transform.
+    const spec = {
+      ...hardware.model.image,
+      rotate: CLOCKWISE_QUARTER_TURN[hardware.model.image.rotate],
+    };
+    hardware.sendSplashImage(IMAGE_WIRES.get(key)!, bytes, spec);
     this.emit('imageSent', key, false);
   }
 
@@ -130,12 +136,14 @@ export function wireStreonorExtraKeys(deps: {
     const slot = dockSlot(STREONOR_EXTRA_DOCK_INDEX, identity);
     const next = new Dock({
       index: slot.index,
-      cora: deps.coraDockFactory(slot),
+      // Elgato deduplicates docks by IP, even when their ports differ.
+      cora: deps.coraDockFactory(slot, '127.0.0.2'),
       ports: { primary: slot.primaryPort, child: slot.childPort },
       identity: slot,
       model: driver.model,
       settings,
       hooks: host.hooksForDock(slot.index),
+      statusExtra: () => ({ pairingAddress: '127.0.0.2' }),
       getShuttingDown: deps.getShuttingDown,
     });
     panel = next;
@@ -145,7 +153,7 @@ export function wireStreonorExtraKeys(deps: {
       log(
         'info',
         'streonor-extra',
-        `right-column keys: Mini slots 0/3, ports ${slot.primaryPort}/${slot.childPort}`,
+        `right-column keys: Mini slots 0/3, 127.0.0.2 ports ${slot.primaryPort}/${slot.childPort}`,
       );
     } catch (e) {
       await next.stop().catch(() => undefined);

@@ -64,7 +64,13 @@ test('only the two Mini slots write to the two right-column displays', () => {
     [15, 10],
   );
   assert.equal(h.writes[0]!.bytes, image);
-  assert.equal(h.writes[0]!.spec, h.driver.model.image);
+  assert.equal(
+    h.writes[0]!.spec.rotate,
+    270,
+    'undo Mini pre-rotation before the Streonor transform',
+  );
+  assert.equal(h.writes[0]!.spec.width, 112);
+  assert.equal(h.driver.model.image.rotate, 180, 'the Plus image transform stays unchanged');
   proxy.clearKey(1);
   proxy.clearKey(3);
   assert.deepEqual(h.clears, [10]);
@@ -145,7 +151,8 @@ await testAsync(
       driverManager: host,
       settings,
       getShuttingDown: () => false,
-      coraDockFactory: () => {
+      coraDockFactory: (_slot, bindAddress) => {
+        assert.equal(bindAddress, '127.0.0.2', 'Elgato needs a distinct IP for the second dock');
         const child = new FakeServer();
         children.push(child);
         return new CoraDock(
@@ -159,6 +166,7 @@ await testAsync(
       await wiring.sync();
       assert.equal(registered.size, 1);
       assert.equal(registered.get(2)!.status().primaryPort, 5347);
+      assert.equal(registered.get(2)!.status().pairingAddress, '127.0.0.2');
       children[0]!.emit('image', { keyIndex: 0, data: new Uint8Array([66, 77]), format: 'bmp' });
       assert.equal(first.writes[0]!.wire, 15);
       current = null;

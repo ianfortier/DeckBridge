@@ -102,8 +102,15 @@ function DockCard({
           </p>
         ) : (
           <>
-            <PairingFlow dock={dock.index} port={String(dock.primaryPort)} onHelp={onHelp} />
-            {showAddressHelp && !autoRestarting && <PairingAddressLink initialDock={dock.index} />}
+            <PairingFlow
+              dock={dock.index}
+              port={String(dock.primaryPort)}
+              address={dock.pairingAddress}
+              onHelp={onHelp}
+            />
+            {showAddressHelp && !dock.pairingAddress && !autoRestarting && (
+              <PairingAddressLink initialDock={dock.index} />
+            )}
           </>
         ))}
       {dock.elgatoConnected && <ExtraKeysPanel />}

@@ -12,7 +12,7 @@ import type { DockHooks, DockSettings } from './dock-types.js';
 /** Builds a dock's CORA server pair (already wrapped as a CoraDock — see
  *  cora-dock.ts) for the given identity; the factory (wired in app.ts) is what
  *  constructs the servers with the identity's ports/serials. */
-export type CoraDockFactory = (identity: DockSlot) => CoraDock;
+export type CoraDockFactory = (identity: DockSlot, bindAddress?: string) => CoraDock;
 
 /** What the scan needs of dock 0's driver (hidPath: WorkerHidDriver only). */
 export interface PrimaryUnit {

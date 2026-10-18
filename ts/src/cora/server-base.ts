@@ -29,7 +29,10 @@ export abstract class CoraServerBase extends EventEmitter {
   protected lastClientRxTs = 0;
   protected abstract componentName: string;
 
-  protected constructor(port: number) {
+  protected constructor(
+    port: number,
+    private readonly listenAddress?: string,
+  ) {
     super();
     this.port = port;
     this.server = net.createServer((socket) => this.acceptConnection(socket));
@@ -68,7 +71,7 @@ export abstract class CoraServerBase extends EventEmitter {
       this.serverErrorHandler = onError;
       this.server.on('error', onError);
       this.cancelStart = onError;
-      this.server.listen(this.port, bindAddr(), () => {
+      this.server.listen(this.port, this.listenAddress ?? bindAddr(), () => {
         started = true;
         this.cancelStart = null;
         resolve();

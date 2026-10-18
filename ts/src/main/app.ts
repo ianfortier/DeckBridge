@@ -163,14 +163,21 @@ webui.updates.setOnChange(pushTrayState);
 // Scanned-dock CORA server pair builder (multi-device). Mirrors the primary wiring
 // above: the childServer shares the SAME server.deviceConfig reference, and each
 // serverLog is piped to the shared logger. No WebUI/comm mirror — WebUI stays primary-only.
-const coraDockFactory: CoraDockFactory = (identity) => {
+const coraDockFactory: CoraDockFactory = (identity, bindAddress) => {
   const s = new ElgatoServer(defaultChildGeometry, identity.primaryPort, false, {
+    bindAddress,
     childPort: identity.childPort,
     mdnsServiceName: identity.mdnsServiceName,
     dockSerial: identity.dockSerial,
     childSerial: identity.childSerial,
   });
-  const cs = new ElgatoChildServer(defaultChildGeometry, identity.childPort, s.deviceConfig, false);
+  const cs = new ElgatoChildServer(
+    defaultChildGeometry,
+    identity.childPort,
+    s.deviceConfig,
+    false,
+    bindAddress,
+  );
   s.on('serverLog', ({ level, component: c, message: m }: LogObject) => log(level, c, m));
   cs.on('serverLog', ({ level, component: c, message: m }: LogObject) => log(level, c, m));
   return new CoraDock(s, cs, `dock ${identity.index}`);

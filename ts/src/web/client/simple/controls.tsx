@@ -66,13 +66,16 @@ export function CopyChip({
 export function ManualAddPanel({
   onHelp,
   port = CORA_PORT,
+  address,
   expanded = false,
 }: Readonly<{
   onHelp: (id: string) => void;
   port?: string;
+  address?: string;
   expanded?: boolean;
 }>): preact.JSX.Element {
-  const ip = useStore((s) => s.status.localIp);
+  const localIp = useStore((s) => s.status.localIp);
+  const ip = address ?? localIp;
 
   return (
     <details class="manual-add panel-inset" open={expanded}>
@@ -89,14 +92,17 @@ export function ManualAddPanel({
       </p>
       <div class="addr-row">
         <CopyChip label="IP" value={ip} cls="addr-chip" pending={!ip} />
+        {address && <CopyChip label="Port" value={port} cls="addr-port-chip" />}
       </div>
-      <details class="addr-other">
-        <summary class="step-sub">Elgato app on this computer?</summary>
-        <div class="addr-row">
-          <CopyChip label="IP" value="127.0.0.1" cls="addr-port-chip" />
-          <CopyChip label="Port" value={port} cls="addr-port-chip" />
-        </div>
-      </details>
+      {!address && (
+        <details class="addr-other">
+          <summary class="step-sub">Elgato app on this computer?</summary>
+          <div class="addr-row">
+            <CopyChip label="IP" value="127.0.0.1" cls="addr-port-chip" />
+            <CopyChip label="Port" value={port} cls="addr-port-chip" />
+          </div>
+        </details>
+      )}
     </details>
   );
 }

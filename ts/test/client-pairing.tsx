@@ -265,7 +265,7 @@ const pending = (index: number): DockUi => ({
 });
 
 async function runPairingDockCards(root: HTMLElement, check: Check): Promise<void> {
-  const docks = [pending(0), pending(1)];
+  const docks = [pending(0), { ...pending(1), pairingAddress: '127.0.0.2' }];
   const posts: Array<{ url: string; body: unknown }> = [];
   const original = globalThis.fetch;
   globalThis.fetch = ((url: string, init?: RequestInit) => {
@@ -344,6 +344,12 @@ async function runPairingDockCards(root: HTMLElement, check: Check): Promise<voi
     check(
       root.querySelector('.manual-add')!.textContent.includes('5344'),
       'Dock pairing: switched instructions use the new port',
+    );
+    check(
+      root.querySelector('.manual-add .addr-chip .addr-text')?.textContent === '127.0.0.2' &&
+        root.querySelector('.manual-add .addr-other') === null &&
+        root.querySelector('.address-link') === null,
+      'Dock pairing: a fixed loopback address replaces the primary address and generic helper',
     );
     await act(() =>
       patch({

@@ -589,6 +589,53 @@ await runTest('opts.dockSerial and opts.childSerial land in deviceConfig', () =>
   assert.equal(s.deviceConfig.childSerialNumber, 'CHILD456ABCDEF');
 });
 
+await runTest(
+  'explicit bind address isolates both CORA ports from the other loopback dock',
+  async () => {
+    const servers = ['127.0.0.1', '127.0.0.2'].map((bindAddress, index) => {
+      const geometry = index === 0 ? MK2_CHILD_GEOMETRY : MINI_CHILD_GEOMETRY;
+      const primary = new ElgatoServer(geometry, 15359, true, {
+        bindAddress,
+        childPort: 15360,
+      });
+      primary.setDeviceConfig({ productId: index === 0 ? 0x80 : 0x63 });
+      const child = new ElgatoChildServer(
+        geometry,
+        15360,
+        primary.deviceConfig,
+        false,
+        bindAddress,
+      );
+      return { bindAddress, primary, child };
+    });
+    try {
+      for (const { primary, child } of servers) {
+        await primary.start();
+        await child.start();
+      }
+      for (const { bindAddress, primary, child } of servers) {
+        for (const [port, endpoint] of [
+          [15359, primary],
+          [15360, child],
+        ] as const) {
+          const f = await connect(port, bindAddress);
+          await f.recv();
+          await sendPkt(f, 0x03, 0x1c);
+          const frame = await f.recv();
+          await closeAndWait(endpoint, f);
+          assert.equal(frame.payload.readUInt16LE(28), bindAddress === '127.0.0.1' ? 0x80 : 0x63);
+          assert.equal(frame.payload.readUInt16LE(126), 15360);
+        }
+      }
+    } finally {
+      for (const { primary, child } of servers) {
+        await primary.stop();
+        await child.stop();
+      }
+    }
+  },
+);
+
 // startCoraWithRetry (H3) moved to CoraDock.startWithRetry — see cora-dock.test.ts.
 
 // WebUIServer: POST /api/brightness

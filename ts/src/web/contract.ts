@@ -307,6 +307,7 @@ export interface DockStatus {
   columns: number;
   rows: number;
   primaryPort: number; // the port the user enters in the Elgato app
+  pairingAddress?: string; // a dock bound to its own local address
   virtualClients?: number; // browser deck only: connected browser pages
   primaryConnected: boolean; // primary (Network Dock) CORA client attached = app discovered us
   elgatoConnected: boolean; // child CORA client attached = paired & active

@@ -80,8 +80,9 @@ export class ElgatoChildServer extends CoraServerBase {
     port: number,
     deviceConfig: DeviceConfig,
     enableOutboundReconnect = true,
+    bindAddress?: string,
   ) {
-    super(port);
+    super(port, bindAddress);
     this.childGeometry = childGeometry;
     this.keyStates = new Uint8Array(childGeometry.keyCount);
     this.deviceConfig = deviceConfig;
