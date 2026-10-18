@@ -112,6 +112,7 @@ export function wireStreonorExtraKeys(deps: {
   coraDockFactory: CoraDockFactory;
   getShuttingDown: () => boolean;
   onPreviewImage?: (index: number, bytes: Uint8Array) => void;
+  onDockConnected?: (index: number, deviceKey: string) => void;
 }): { sync(): Promise<void>; stop(): Promise<void>; pressPreviewKey(index: number): boolean } {
   const { driverManager: host, settings } = deps;
   const driver = new StreonorExtraKeysDriver();
@@ -156,6 +157,7 @@ export function wireStreonorExtraKeys(deps: {
     host.addExternalDock(next);
     try {
       await next.start(driver);
+      deps.onDockConnected?.(slot.index, slot.deviceKey);
       log(
         'info',
         'streonor-extra',

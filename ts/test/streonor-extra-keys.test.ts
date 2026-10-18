@@ -181,6 +181,7 @@ await testAsync(
     const children: FakeServer[] = [];
     const previews: number[] = [];
     const presses: number[][] = [];
+    const connected: Array<{ index: number; deviceKey: string }> = [];
     const first = hardware();
     const second = hardware();
     let current: DockDriver | null = first.driver;
@@ -203,6 +204,7 @@ await testAsync(
       settings,
       getShuttingDown: () => false,
       onPreviewImage: (index) => previews.push(index),
+      onDockConnected: (index, deviceKey) => connected.push({ index, deviceKey }),
       coraDockFactory: (_slot, bindAddress) => {
         assert.equal(bindAddress, '127.0.0.2', 'Elgato needs a distinct IP for the second dock');
         const child = new FakeServer();
@@ -219,6 +221,11 @@ await testAsync(
       assert.equal(registered.size, 1);
       assert.equal(registered.get(2)!.status().primaryPort, 5347);
       assert.equal(registered.get(2)!.status().pairingAddress, '127.0.0.2');
+      assert.deepEqual(
+        connected,
+        [{ index: 2, deviceKey: 'usb:streonor-test:extra-keys' }],
+        'automatic reconnect must also watch the Mini panel',
+      );
       children[0]!.emit('image', { keyIndex: 0, data: new Uint8Array([66, 77]), format: 'bmp' });
       assert.equal(first.writes[0]!.wire, 15);
       children[0]!.emit('image', { keyIndex: 3, data: new Uint8Array([66, 77]), format: 'bmp' });
@@ -241,6 +248,7 @@ await testAsync(
       );
       assert.equal(second.writes[0]!.wire, 15, 'restore the last Elgato frame after replug');
       assert.deepEqual(previews, [8, 9, 8, 9], 'restore the merged preview after a USB replug');
+      assert.equal(connected.length, 1, 'a USB replug keeps the same Mini CORA session');
     } finally {
       await wiring.stop();
       await settings.close();

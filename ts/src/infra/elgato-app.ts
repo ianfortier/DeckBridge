@@ -149,7 +149,7 @@ function launchAttempts(deps: Deps, platform: string): Array<() => Promise<void>
   const programFiles = tjs.env.ProgramFiles ?? 'C:\\Program Files';
   return [
     () => {
-      deps.spawn([`${programFiles}\\Elgato\\StreamDeck\\StreamDeck.exe`], {
+      deps.spawn([`${programFiles}\\Elgato\\StreamDeck\\StreamDeck.exe`, '--runinbk'], {
         stdout: 'ignore',
         stderr: 'ignore',
       });

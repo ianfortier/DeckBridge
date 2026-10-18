@@ -54,6 +54,25 @@ await test('deeplink quit succeeds, then launch is verified — killed: false', 
   );
 });
 
+await test('Windows restart relaunches in the background without opening the editor', async () => {
+  const { deps, calls, state, hooks } = fakeDeps({ platform: 'Windows' });
+  hooks.onOpenUrl = (url) => {
+    if (url === 'streamdeck://app/quit') state.running = false;
+  };
+  hooks.onSpawn = (args) => {
+    if (args[0]!.endsWith('\\StreamDeck.exe')) {
+      assert.deepEqual(args.slice(1), ['--runinbk']);
+      state.running = true;
+    }
+  };
+
+  const control = createElgatoAppControl(deps);
+  const result = await control.restart({ quitTimeoutMs: 50, relaunchDelayMs: 1 });
+
+  assert.deepEqual(result, { ok: true, killed: false });
+  assert.equal(calls.filter((call) => call.startsWith('spawn:')).length, 1);
+});
+
 await test('deeplink quit times out, kill fallback succeeds', async () => {
   const { deps, calls, state, hooks } = fakeDeps();
   // openUrl (the deeplink) never changes `state.running` in this test, so the

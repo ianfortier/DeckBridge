@@ -228,6 +228,7 @@ const streonorExtraKeys = wireStreonorExtraKeys({
   coraDockFactory,
   getShuttingDown: () => shuttingDown,
   onPreviewImage: (index, bytes) => webui.notifyDockImage(0, index, Buffer.from(bytes), 'bmp'),
+  onDockConnected: (index, key) => elgatoAutoRestart.onDockConnected(index, key),
 });
 
 webui.on('keyPress', ({ dock, index }: { dock: number; index: number }) => {
